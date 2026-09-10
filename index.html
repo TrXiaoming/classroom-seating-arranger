@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>班級座位安排器</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- html2canvas for image export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <!-- SheetJS for Excel export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <!-- SortableJS for drag and drop -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Left Panel: Canvas -->
+        <div class="canvas-panel" id="canvas-panel">
+            <div class="canvas-header">
+                <h2>座位表</h2>
+            </div>
+            <div class="class-metadata-display">
+                    <span id="display-school"></span>
+                    <span id="display-course"></span>
+                    <span id="display-time"></span>
+                    <span id="display-classroom"></span>
+                </div>
+            
+            <div class="seating-area-wrapper" id="capture-area">
+            <div id="layout-wrapper" style="display: inline-flex; flex-direction: column; align-items: center; position: relative;">
+                <div class="grid-container" id="grid-container">
+                    <!-- Seats will be generated here -->
+                </div>
+                <!-- Podium -->
+                <div class="podium">講台</div>
+            </div>
+            </div>
+
+            <div class="export-actions">
+                <button id="btn-export-img" class="btn-primary">下載圖片</button>
+                <button id="btn-export-excel" class="btn-primary">下載 Excel</button>
+            </div>
+        </div>
+
+        <!-- Right Panel: Controls -->
+        <div class="controls-panel">
+            <div class="card">
+                <h3>1. 課程資訊</h3>
+                <input type="text" id="input-school" placeholder="學校名稱">
+                <input type="text" id="input-course" placeholder="課程名稱 (例如: 一年A班 國文)">
+                <input type="text" id="input-time" placeholder="上課時間 (例如: 星期一 10:00)">
+                <input type="text" id="input-classroom" placeholder="上課教室">
+            </div>
+
+            <div class="card">
+                <h3>2. 座位設定</h3>
+                <div class="input-group">
+                    <label>行 (直): <input type="number" id="input-cols" value="6" min="1"></label>
+                    <label>列 (橫): <input type="number" id="input-rows" value="5" min="1"></label>
+                </div>
+                <p style="font-size: 13px; color: #666; margin-bottom: 15px;">💡 提示：滑鼠移到座位之間的空隙並點擊，即可切換走道。</p>
+                <button id="btn-generate-grid" class="btn-secondary">更新網格</button>
+                <hr>
+                <button id="btn-add-door" class="btn-secondary">新增一個門</button>
+            </div>
+
+            <div class="card">
+                <h3>3. 匯入名單</h3>
+                <textarea id="input-students" rows="5" placeholder="請貼上學生名單，每行一個姓名，或用逗號、空格分隔。"></textarea>
+                <button id="btn-import-students" class="btn-primary">確認名單</button>
+            </div>
+
+            <div class="card">
+                <h3>4. 待安排學生 (<span id="student-count">0</span>)</h3>
+                <div class="student-pool" id="student-pool">
+                    <!-- Draggable student icons will appear here -->
+                </div>
+            </div>
+
+            <div class="card draft-controls">
+                <h3>草稿管理</h3>
+                <button id="btn-save-draft" class="btn-primary">儲存草稿</button>
+                <button id="btn-load-draft" class="btn-secondary">載入草稿</button>
+                <button id="btn-clear-all" class="btn-danger">清除全部</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Draft Modal -->
+    <div id="draft-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" id="modal-close">&times;</span>
+            <h2>選擇要載入的草稿</h2>
+            <ul id="draft-list"></ul>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
