@@ -82,6 +82,16 @@ document.addEventListener('DOMContentLoaded', () => {
         const cols = parseInt(inputCols.value) || 6;
         const rows = parseInt(inputRows.value) || 5;
 
+        // Save existing students mapped by their seat index
+        const existingSeats = Array.from(gridContainer.querySelectorAll('.seat'));
+        const studentMapping = {};
+        existingSeats.forEach((seat, index) => {
+            const student = seat.querySelector('.student-icon');
+            if (student) {
+                studentMapping[index] = student;
+            }
+        });
+
         gridContainer.innerHTML = '';
         gridContainer.style.position = 'relative';
         
@@ -94,15 +104,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         gridContainer.style.marginLeft = '0';
         gridContainer.style.marginTop = '0';
-        // Save existing students in grid back to pool or keep them if possible
-        // For simplicity, we just clear the grid. Users should generate grid first.
-        const existingStudents = Array.from(gridContainer.querySelectorAll('.student-icon'));
-        existingStudents.forEach(el => studentPool.appendChild(el));
-        updateStudentCount();
 
-        gridContainer.innerHTML = '';
-        gridContainer.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
-        
         // Destroy old sortables
         sortables.forEach(s => s.destroy());
         sortables = [];
@@ -113,6 +115,12 @@ document.addEventListener('DOMContentLoaded', () => {
             seat.className = 'seat';
             seat.dataset.index = i;
             gridContainer.appendChild(seat);
+
+            // Restore student if one was at this index
+            if (studentMapping[i]) {
+                seat.appendChild(studentMapping[i]);
+                delete studentMapping[i];
+            }
 
             // Make seat droppable
             const sortable = new Sortable(seat, {
@@ -137,6 +145,12 @@ document.addEventListener('DOMContentLoaded', () => {
             sortables.push(sortable);
         }
         
+        // Any leftover students (e.g. grid got smaller) go back to the pool
+        Object.values(studentMapping).forEach(student => {
+            studentPool.appendChild(student);
+        });
+        updateStudentCount();
+
         applyGaps();
         gridContainer.appendChild(gapIndicator);
     }
@@ -298,6 +312,7 @@ document.addEventListener('DOMContentLoaded', () => {
         door.style.top = '50px';
         
         door.addEventListener('mousedown', startDragDoor);
+        door.addEventListener('touchstart', startDragDoor, {passive: false});
         door.addEventListener('dblclick', () => {
             doors = doors.filter(d => d.id !== door.id);
             door.remove();
@@ -308,26 +323,36 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function startDragDoor(e) {
+        if(e.type === 'touchstart') e.preventDefault(); // prevent scrolling while dragging
         isDraggingDoor = true;
         currentDoor = e.target;
         
         const rect = currentDoor.getBoundingClientRect();
-        const parentRect = captureArea.getBoundingClientRect();
+        const clientX = e.type.includes('mouse') ? e.clientX : e.touches[0].clientX;
+        const clientY = e.type.includes('mouse') ? e.clientY : e.touches[0].clientY;
         
-        offsetX = e.clientX - rect.left;
-        offsetY = e.clientY - rect.top;
+        offsetX = clientX - rect.left;
+        offsetY = clientY - rect.top;
 
-        document.addEventListener('mousemove', dragDoor);
-        document.addEventListener('mouseup', stopDragDoor);
+        if (e.type.includes('mouse')) {
+            document.addEventListener('mousemove', dragDoor);
+            document.addEventListener('mouseup', stopDragDoor);
+        } else {
+            document.addEventListener('touchmove', dragDoor, {passive: false});
+            document.addEventListener('touchend', stopDragDoor);
+        }
     }
 
     function dragDoor(e) {
         if (!isDraggingDoor || !currentDoor) return;
+        if(e.type === 'touchmove') e.preventDefault();
         
         const parentRect = captureArea.getBoundingClientRect();
+        const clientX = e.type.includes('mouse') ? e.clientX : e.touches[0].clientX;
+        const clientY = e.type.includes('mouse') ? e.clientY : e.touches[0].clientY;
         
-        let newX = e.clientX - parentRect.left - offsetX;
-        let newY = e.clientY - parentRect.top - offsetY;
+        let newX = clientX - parentRect.left - offsetX;
+        let newY = clientY - parentRect.top - offsetY;
 
         const maxX = parentRect.width - currentDoor.offsetWidth;
         const maxY = parentRect.height - currentDoor.offsetHeight;
@@ -363,6 +388,8 @@ document.addEventListener('DOMContentLoaded', () => {
         currentDoor = null;
         document.removeEventListener('mousemove', dragDoor);
         document.removeEventListener('mouseup', stopDragDoor);
+        document.removeEventListener('touchmove', dragDoor);
+        document.removeEventListener('touchend', stopDragDoor);
     }
 
     // --- Export ---
