@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <title>座位表產生器 - 操作圖文說明</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #333; max-width: 800px; margin: 0 auto; padding: 20px; }
+        h1 { color: #d05b43; border-bottom: 2px solid #d05b43; padding-bottom: 10px; }
+        h2 { color: #4a4a4a; margin-top: 30px; }
+        img { max-width: 100%; border: 1px solid #ccc; border-radius: 8px; margin: 15px 0; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        .tip { background-color: #f9f9f9; border-left: 4px solid #d05b43; padding: 15px; margin-top: 30px; }
+    </style>
+</head>
+<body>
+    <h1>座位表產生器 - 操作圖文說明</h1>
+    <p>歡迎使用「座位表產生器」！這是一個專為老師設計的排座位工具，能夠輕鬆安排班級座位、設定走道，並匯出成圖片或 Excel。</p>
+    
+    <img src="docs/ui_main.png" alt="系統首頁">
+
+    <h2>1. 填寫課程資訊與設定網格</h2>
+    <p>一開始，您可以在右側面板設定<strong>課程資訊</strong>（如學校、課程、時間、教室）。<br>
+    接著在<strong>座位設定</strong>區塊，輸入您需要的「行」與「列」數，然後點擊「<strong>更新網格</strong>」。</p>
+
+    <h2>2. 匯入名單與自動排座</h2>
+    <p>您可以將學生名單貼入文字方塊中（每行一個名字），然後點擊「<strong>產生學生名單</strong>」。</p>
+    <ul>
+        <li>您可以用滑鼠（或在平板上用手指）將學生拖曳到任何座位上。</li>
+        <li>或者點擊「<strong>自動分配座位 (S型)</strong>」來一鍵填滿座位。</li>
+        <li>也可以點擊「<strong>相鄰分組模式</strong>」來自動把相鄰的座位兩兩一組！</li>
+    </ul>
+    
+    <img src="docs/ui_students.png" alt="安排學生">
+
+    <h2>3. 設定走道</h2>
+    <p>這是一個非常強大的功能！<br>
+    當您將滑鼠（或手指）移到座位與座位之間的<strong>空隙</strong>時，會出現藍色的提示條。</p>
+    <ul>
+        <li><strong>點擊</strong>藍色提示條，就會在該處產生一條寬敞的走道！</li>
+        <li>再次點擊，就可以取消走道。</li>
+    </ul>
+    
+    <img src="docs/ui_gaps.png" alt="設定走道">
+
+    <h2>4. 加入「門」</h2>
+    <p>如果您需要標示教室門的位置，點擊「<strong>新增一個門</strong>」。</p>
+    <ul>
+        <li>您可以自由將門拖曳到教室的四個邊界上。</li>
+        <li>連續點擊兩下門即可刪除它。</li>
+    </ul>
+
+    <h2>5. 匯出座位表</h2>
+    <p>排好座位後，您可以點擊左下角的按鈕將座位表存檔：</p>
+    <ul>
+        <li><strong>下載圖片</strong>：將目前的座位表儲存為 PNG 圖片。</li>
+        <li><strong>下載 Excel</strong>：將座位表匯出為 Excel 檔案，方便後續列印或編輯。</li>
+    </ul>
+
+    <div class="tip">
+        <strong>💡 小技巧：</strong> 如果您排到一半需要暫停，可以點擊「<strong>儲存草稿</strong>」，下次進來時只要點擊「<strong>讀取草稿</strong>」就能繼續編輯！
+    </div>
+</body>
+</html>
